@@ -21,6 +21,10 @@ if (theme.value === 'dark') {
 } else {
   document.documentElement.classList.remove('dark')
 }
+
+const toggleTheme = () => {
+  theme.value = theme.value === 'dark' ? 'light' : 'dark';
+}
 </script>
 
 <template>
