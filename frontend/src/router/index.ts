@@ -8,7 +8,7 @@ const routes: Array<RouteRecordRaw> = [
       title: 'Index_View',
       isPage: true
     },
-    component: () => import('../components/Dashboard.vue')
+    component: () => import('@components/Dashboard-finished.vue')
   }
 ]
 

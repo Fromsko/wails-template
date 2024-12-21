@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 
 // 创建一个响应式的 theme 状态
 const theme = ref(localStorage.getItem('color-theme') || 'light')
+const isSidebarOpen = ref(false) // 控制侧边栏的显示和隐藏
 
 // 监听 theme 的变化并更新页面的样式
-watch(theme, (newTheme) => {
+watch(theme, (newTheme: string) => {
   if (newTheme === 'dark') {
     document.documentElement.classList.add('dark')
     localStorage.setItem('color-theme', 'dark')
@@ -23,7 +24,11 @@ if (theme.value === 'dark') {
 }
 
 const toggleTheme = () => {
-  theme.value = theme.value === 'dark' ? 'light' : 'dark';
+  theme.value = theme.value === 'dark' ? 'light' : 'dark'
+}
+
+const toggleSidebar = () => {
+  isSidebarOpen.value = !isSidebarOpen.value
 }
 </script>
 
@@ -31,43 +36,59 @@ const toggleTheme = () => {
   <div class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white antialiased font-sans">
     <div class="flex flex-col h-screen">
       <!-- 顶部导航栏 -->
-      <header class="bg-white dark:bg-gray-800 shadow dark:border-b dark:border-gray-700">
+      <header
+        class="bg-white dark:bg-gray-800 shadow dark:border-b dark:border-gray-700"
+        style="--wails-draggable: drag"
+      >
         <div class="flex items-center justify-between px-6 py-4">
           <div class="flex items-center">
             <!-- 移动端菜单按钮 -->
             <button
               id="menu-toggle"
-              class="text-gray-500 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-100 focus:outline-none focus:text-gray-600 dark:focus:text-gray-100 lg:hidden"
+              class="text-gray-500 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-100 focus:outline-none focus:text-gray-600 dark:focus:text-gray-100"
+              @click="toggleSidebar"
             >
               <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-            <h2 class="text-xl font-semibold ml-2 lg:ml-0 lg:hidden">仪表盘</h2>
+            <h2 class="text-xl font-semibold ml-2 lg:ml-0">仪表盘</h2>
           </div>
           <div class="flex items-center">
             <!-- 主题切换 -->
             <div class="flex items-center space-x-4">
-              <label for="theme-light" class="text-gray-500 dark:text-gray-400">亮色</label>
-              <input
-                type="radio"
-                id="theme-light"
-                name="theme"
-                value="light"
-                v-model="theme"
-                @change="toggleTheme"
-                class="form-radio h-5 w-5 text-blue-600 dark:text-blue-500"
-              />
-              <label for="theme-dark" class="text-gray-500 dark:text-gray-400">暗色</label>
-              <input
-                type="radio"
-                id="theme-dark"
-                name="theme"
-                value="dark"
-                v-model="theme"
-                @change="toggleTheme"
-                class="form-radio h-5 w-5 text-blue-600 dark:text-blue-500"
-              />
+              <button
+                id="theme-toggle"
+                class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 mr-2"
+                @click="toggleTheme"
+              >
+                <!-- 亮色图标 -->
+                <svg
+                  id="theme-toggle-dark-icon"
+                  class="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                  :class="{ hidden: theme === 'dark' }"
+                >
+                  <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                </svg>
+                <!-- 暗色图标 -->
+                <svg
+                  id="theme-toggle-light-icon"
+                  class="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                  :class="{ hidden: theme === 'light' }"
+                >
+                  <path
+                    d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </button>
             </div>
 
             <span class="mr-2">管理员</span>
@@ -78,9 +99,12 @@ const toggleTheme = () => {
 
       <div class="flex-1 flex overflow-hidden">
         <!-- 侧边栏 -->
-        <aside id="sidebar" class="bg-white dark:bg-gray-900 dark:text-white w-48 flex-shrink-0 hidden lg:block">
+        <aside
+          v-show="isSidebarOpen"
+          id="sidebar"
+          class="bg-white dark:bg-gray-900 dark:text-white w-48 flex-shrink-0 lg:block transition-transform transform lg:translate-x-0"
+        >
           <div class="p-4 border-y dark:border-gray-700 dark:bg-gray-900 select-none">
-            <!-- <h1 class="text-2xl font-semibold">管理系统</h1> -->
             <img src="https://one-hub.xiao5.info/assets/logo-llWtC-Rj.svg" class="h-12 w-full" alt="Logo" />
           </div>
           <nav class="mt-4 space-y-1">
