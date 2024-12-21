@@ -1,0 +1,7 @@
+{
+  "name": "vue-ts-twd",
+  "shortname": "vue-twd",
+  "author": "Fromsko",
+  "description": "Using vue + ts + tailwindcss builder",
+  "helpurl": "https://github.com/fromsko"
+}

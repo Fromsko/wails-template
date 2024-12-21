@@ -1,0 +1,78 @@
+package main
+
+import (
+	"embed"
+	"log"
+
+	"{{.ProjectName}}/backend"
+
+	"github.com/wailsapp/wails/v2"
+	"github.com/wailsapp/wails/v2/pkg/logger"
+	"github.com/wailsapp/wails/v2/pkg/options"
+	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/mac"
+	"github.com/wailsapp/wails/v2/pkg/options/windows"
+)
+
+//go:embed all:frontend/dist
+var assets embed.FS
+
+//go:embed build/appicon.png
+var icon []byte
+
+func main() {
+	// Init app
+	app := backend.NewApp()
+	// Start
+	err := wails.Run(&options.App{
+		Title:         "{{.ProjectName}}",
+		Width:         1024,
+		Height:        768,
+		AlwaysOnTop:   true,
+		DisableResize: true,
+		Frameless:     true,
+		LogLevel:      logger.DEBUG,
+		OnStartup:     app.Startup,
+		OnShutdown:    app.Shutdown,
+		OnDomReady:    app.DomReady,
+		Windows: &windows.Options{
+			WebviewUserDataPath:               "",
+			DisableWindowIcon:                 false,
+			WebviewIsTransparent:              true,
+			WindowIsTranslucent:               true,
+			WebviewGpuIsDisabled:              true,
+			DisableFramelessWindowDecorations: true,
+			Theme:                             windows.SystemDefault,
+		},
+		// Mac platform specific options
+		Mac: &mac.Options{
+			TitleBar: &mac.TitleBar{
+				TitlebarAppearsTransparent: true,
+				HideTitle:                  false,
+				HideTitleBar:               false,
+				FullSizeContent:            false,
+				UseToolbar:                 false,
+				HideToolbarSeparator:       true,
+			},
+			Appearance:           mac.NSAppearanceNameDarkAqua,
+			WebviewIsTransparent: true,
+			WindowIsTranslucent:  true,
+			About: &mac.AboutInfo{
+				Title:   "{{.ProjectName}}",
+				Message: "",
+				Icon:    icon,
+			},
+		},
+		BackgroundColour: &options.RGBA{R: 0, G: 0, B: 0, A: 0},
+		AssetServer: &assetserver.Options{
+			Assets: assets,
+		},
+		Bind: []interface{}{
+			app,
+		},
+	})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+}
