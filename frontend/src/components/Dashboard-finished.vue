@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { Quit, WindowMinimise } from '../../wailsjs/runtime/runtime'
+import { ref, watch } from 'vue'
 
-// 创建一个响应式的 theme 状态
 const theme = ref(localStorage.getItem('color-theme') || 'light')
-const isSidebarOpen = ref(false) // 控制侧边栏的显示和隐藏
+const isSidebarOpen = ref(true)
 
-// 监听 theme 的变化并更新页面的样式
 watch(theme, (newTheme: string) => {
   if (newTheme === 'dark') {
     document.documentElement.classList.add('dark')
@@ -16,7 +15,6 @@ watch(theme, (newTheme: string) => {
   }
 })
 
-// 根据初始主题设置页面样式
 if (theme.value === 'dark') {
   document.documentElement.classList.add('dark')
 } else {
@@ -91,8 +89,10 @@ const toggleSidebar = () => {
               </button>
             </div>
 
-            <span class="mr-2">管理员</span>
-            <button class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md">登出</button>
+            <span class="mr-2 select-none">管理员</span>
+            <!-- <button class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md">登出</button> -->
+            <button class="btn-min" @click="WindowMinimise">-</button>
+            <button class="btn-close" @click="Quit">x</button>
           </div>
         </div>
       </header>
