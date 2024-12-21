@@ -10,6 +10,10 @@
 wails init -n MyProject -t https://github.com/Fromsko/wails-template
 ```
 
+## Show
+
+![Show-Gif](./docs/show.gif)
+
 ## Live Development
 
 To run in live development mode, run `wails dev` in the project directory. In another terminal, go into the `frontend`
