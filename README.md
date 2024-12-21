@@ -4,6 +4,12 @@
 
 > wails tailwindcss + ts + vue
 
+## Using
+
+```shell
+wails init -n MyProject -t https://github.com/Fromsko/wails-template
+```
+
 ## Live Development
 
 To run in live development mode, run `wails dev` in the project directory. In another terminal, go into the `frontend`
